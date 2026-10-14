@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: BSD-2-Clause
+# Where this repository is checked out; MediaTek's own build has it at
+# vendor/mediatek/kernel_modules next to the output directory.
+MTK_KERNEL_MODULES_PATH ?= $(O)/../vendor/mediatek/kernel_modules
+
 KVERSION := $(shell uname -r)
 
-CONN_ALPS_OUT_PATH := $(wildcard $(abspath $(O)/../vendor/mediatek/kernel_modules/connectivity/))
+CONN_ALPS_OUT_PATH := $(wildcard $(abspath $(MTK_KERNEL_MODULES_PATH)/connectivity/))
 CONNECTIVITY_OUT_PATH := $(if $(CONN_ALPS_OUT_PATH), $(CONN_ALPS_OUT_PATH), $(CONN_EAP_OUT_PATH))
 
 $(info Default out path=$(CONN_ALPS_OUT_PATH))
@@ -25,10 +29,14 @@ else
 	EXTRA_SYMBOLS += $(MODULE_PWD)/../adaptor/wlan_page_pool/Module.symvers
 	EXTRA_SYMBOLS += $(MODULE_PWD)/../connfem/Module.symvers
 endif
-MODULE_PWD=../vendor/mediatek/kernel_modules/connectivity/wlan/core/gen4m
+MODULE_PWD=$(abspath $(MTK_KERNEL_MODULES_PATH)/connectivity/wlan/core/gen4m)
 $(info gen4m depends on following symbols:[${EXTRA_SYMBOLS}])
 modules modules_install clean:
 	$(MAKE) -C $(KERNEL_DIR) M=$(MODULE_PWD) $(KBUILD_OPTIONS) EXTRA_CFLAGS="$(EXTRA_CFLAGS)" KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)" MODULE_NAME=$(_MODULE_NAME) SEGMENT=$(SEGMENT) $(@)
-	mkdir -p $(O)/$(M)
-	cp -f $(O)/$(MODULE_PWD)/Module.symvers $(O)/$(M)/Module.symvers
-	cp -f $(O)/$(MODULE_PWD)/*.ko $(O)/$(M)
+	# Only when the objects went to a separate output tree; a 6.6 kernel builds
+	# external modules in their source directory.
+	if [ -d $(O)/$(MODULE_PWD) ]; then \
+		mkdir -p $(O)/$(M) && \
+		cp -f $(O)/$(MODULE_PWD)/Module.symvers $(O)/$(M)/Module.symvers && \
+		cp -f $(O)/$(MODULE_PWD)/*.ko $(O)/$(M); \
+	fi

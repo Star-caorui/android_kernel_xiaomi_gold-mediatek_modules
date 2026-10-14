@@ -1,6 +1,10 @@
+# Where this repository is checked out; MediaTek's own build has it at
+# vendor/mediatek/kernel_modules next to the output directory.
+MTK_KERNEL_MODULES_PATH ?= $(OUT_DIR)/../vendor/mediatek/kernel_modules
+
 include $(wildcard $(KERNEL_SRC)/$(DEVICE_MODULES_REL_DIR)/Makefile.include)
 
-EXTRA_SYMBOLS += $(OUT_DIR)/../vendor/mediatek/kernel_modules/connectivity/common/Module.symvers
+EXTRA_SYMBOLS += $(MTK_KERNEL_MODULES_PATH)/connectivity/common/Module.symvers
 
 modules modules_install clean:
 	$(MAKE) -C $(KERNEL_SRC) M=$(M) $(KBUILD_OPTIONS) KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)" $(@)
