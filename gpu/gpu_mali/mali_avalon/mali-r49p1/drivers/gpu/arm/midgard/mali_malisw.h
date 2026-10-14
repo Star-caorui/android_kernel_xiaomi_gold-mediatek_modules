@@ -36,6 +36,7 @@
  * As a macro it may evaluate its arguments more than once.
  * Refer to MAX macro for more details
  */
+#include <linux/minmax.h>
 #ifndef MIN
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 #endif
