@@ -32,7 +32,9 @@ else
 	EXTRA_SYMBOLS += $(MODULE_PWD)/../adaptor/wlan_page_pool/Module.symvers
 	EXTRA_SYMBOLS += $(MODULE_PWD)/../connfem/Module.symvers
 endif
-MODULE_PWD=$(abspath $(MTK_KERNEL_MODULES_PATH)/connectivity/wlan/core/gen4m)
+# build/<connac>/<chip>/../../.. is gen4m, given the way the kernel was given M,
+# so the objects land in the output tree, not in the sources.
+MODULE_PWD=$(M)/../../..
 $(info gen4m depends on following symbols:[${EXTRA_SYMBOLS}])
 modules modules_install clean:
 	$(MAKE) -C $(KERNEL_DIR) M=$(MODULE_PWD) $(KBUILD_OPTIONS) EXTRA_CFLAGS="$(EXTRA_CFLAGS)" KBUILD_EXTRA_SYMBOLS="$(EXTRA_SYMBOLS)" MODULE_NAME=$(_MODULE_NAME) SEGMENT=$(SEGMENT) $(@)
