@@ -2,10 +2,13 @@
 # Where this repository is checked out; MediaTek's own build has it at
 # vendor/mediatek/kernel_modules next to the output directory.
 MTK_KERNEL_MODULES_PATH ?= $(O)/../vendor/mediatek/kernel_modules
+# Where the build put this repository's modules (their Module.symvers):
+# the checkout itself, unless the external modules are built elsewhere.
+MTK_KERNEL_MODULES_OUT ?= $(MTK_KERNEL_MODULES_PATH)
 
 KVERSION := $(shell uname -r)
 
-CONN_ALPS_OUT_PATH := $(wildcard $(abspath $(MTK_KERNEL_MODULES_PATH)/connectivity/))
+CONN_ALPS_OUT_PATH := $(wildcard $(abspath $(MTK_KERNEL_MODULES_OUT)/connectivity/))
 CONNECTIVITY_OUT_PATH := $(if $(CONN_ALPS_OUT_PATH), $(CONN_ALPS_OUT_PATH), $(CONN_EAP_OUT_PATH))
 
 $(info Default out path=$(CONN_ALPS_OUT_PATH))
